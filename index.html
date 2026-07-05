@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>SwimMatch · 你的成绩能游进哪所美国大学?</title>
+<style>
+:root{
+  --bg:#f4f8fb; --card:#ffffff; --ink:#0f2740; --sub:#5b7186; --line:#dde8f0;
+  --blue:#0a6ebd; --aqua:#00a8cc; --safety:#1a9e6c; --match:#0a6ebd; --reach:#e08a00; --far:#98a8b5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.logo{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.logo span{background:linear-gradient(90deg,var(--blue),var(--aqua));-webkit-background-clip:text;background-clip:text;color:transparent}
+.beta{font-size:11px;font-weight:700;color:#fff;background:var(--aqua);border-radius:20px;padding:2px 9px;vertical-align:middle;margin-left:6px}
+.langbtn{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:5px 14px;font-size:13px;cursor:pointer;color:var(--sub)}
+.tagline{color:var(--sub);font-size:15px;margin:2px 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(15,39,64,.04)}
+h2{font-size:16px;margin-bottom:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:8px 18px;font-size:14px;cursor:pointer;color:var(--sub)}
+.seg button.on{background:var(--blue);color:#fff;font-weight:600}
+.row{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px}
+.field label{display:block;font-size:12px;color:var(--sub);margin-bottom:6px;font-weight:600}
+.events{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ev{display:flex;flex-direction:column}
+.ev label{font-size:12px;color:var(--sub);margin-bottom:3px}
+.ev input{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:15px;width:100%;font-variant-numeric:tabular-nums}
+.ev input:focus{outline:2px solid var(--aqua);border-color:transparent}
+.ev input.bad{outline:2px solid #d94f4f}
+.go{margin-top:18px;width:100%;border:0;border-radius:10px;padding:13px;font-size:16px;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--blue),var(--aqua));cursor:pointer}
+.go:active{opacity:.85}
+.hint{font-size:12px;color:var(--sub);margin-top:8px}
+.summary{display:flex;gap:14px;flex-wrap:wrap}
+.stat{flex:1;min-width:130px;background:var(--bg);border-radius:10px;padding:12px 14px}
+.stat .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.stat .k{font-size:12px;color:var(--sub)}
+.tier-h{display:flex;align-items:center;gap:8px;margin:22px 0 10px;font-size:15px;font-weight:800}
+.tier-h .dot{width:10px;height:10px;border-radius:50%}
+.tier-h .cnt{font-weight:600;color:var(--sub);font-size:13px}
+.school{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--far);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.school .top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.school .nm{font-size:16px;font-weight:800}
+.badge{font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;background:var(--bg);color:var(--sub)}
+.badge.d1{background:#e7f0fa;color:var(--blue)}
+.badge.d3{background:#eaf7f1;color:var(--safety)}
+.pos{font-size:13px;color:var(--sub);margin-top:4px}
+.pos b{color:var(--ink)}
+.strip{position:relative;height:26px;margin:10px 0 2px;background:var(--bg);border-radius:6px}
+.strip .pt{position:absolute;top:9px;width:7px;height:7px;border-radius:50%;background:#b9cddd;transform:translateX(-50%)}
+.strip .me{position:absolute;top:3px;width:3px;height:19px;border-radius:2px;background:var(--aqua);transform:translateX(-50%)}
+.striplbl{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:6px}
+.evcmp{font-size:12.5px;color:var(--sub);margin-top:6px;font-variant-numeric:tabular-nums}
+.evcmp .ok{color:var(--safety);font-weight:700}
+.evcmp .no{color:var(--reach);font-weight:700}
+.small{font-size:11px;color:var(--far)}
+.note{font-size:12px;color:var(--sub);background:#fdf6e8;border:1px solid #f2e3bd;border-radius:10px;padding:10px 14px;margin:14px 0}
+footer{margin-top:28px;font-size:12px;color:var(--far);line-height:1.7}
+.hide{display:none}
+@media (max-width:520px){.events{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo"><span>Swim</span>Match<span class="beta">FREE BETA</span></div>
+  <button class="langbtn" id="langbtn" onclick="toggleLang()">English</button>
+</header>
+<p class="tagline" id="tagline">输入你的比赛成绩,看看以 2026 级新生的真实水平,你能游进哪所美国大学。</p>
+
+<div class="card">
+  <h2 id="f-title">你的成绩</h2>
+  <div class="row">
+    <div class="field"><label id="f-gender">性别</label>
+      <div class="seg" id="genderSeg">
+        <button data-v="M" class="on">男 Men</button><button data-v="W">女 Women</button>
+      </div>
+    </div>
+    <div class="field"><label id="f-course">泳池 / 成绩类型</label>
+      <div class="seg" id="courseSeg">
+        <button data-v="LCM" class="on">长池 50m</button><button data-v="SCM">短池 25m</button><button data-v="SCY">短码 25y</button>
+      </div>
+    </div>
+  </div>
+  <div class="field"><label id="f-events">填写你有的项目即可(格式如 26.66 或 2:21.50)</label></div>
+  <div class="events" id="events"></div>
+  <button class="go" id="gobtn" onclick="run()">生成匹配报告 →</button>
+  <div class="hint" id="f-hint">中国选手直接填长池米成绩即可,系统自动与美国短码成绩换算对比。</div>
+</div>
+
+<div id="results" class="hide">
+  <div class="card">
+    <h2 id="r-title">你的水平概览</h2>
+    <div class="summary" id="summary"></div>
+    <div class="note" id="r-note"></div>
+  </div>
+  <div id="tiers"></div>
+</div>
+
+<footer id="foot"></footer>
+</div>
+
+<script>
+const I18N = {
+  zh: {
+    tagline:"输入你的比赛成绩,看看以 2026 级新生的真实水平,你能游进哪所美国大学。",
+    fTitle:"你的成绩", gender:"性别", course:"泳池 / 成绩类型",
+    events:"填写你有的项目即可(格式如 26.66 或 2:21.50)",
+    go:"生成匹配报告 →",
+    hint:"中国选手直接填长池米成绩即可,系统自动与美国短码成绩换算对比。",
+    rTitle:"你的水平概览",
+    bestPts:"最强项积分", bestEv:"最强项目", scyEq:"换算短码成绩", nEv:"已填项目",
+    note:"积分为 SwimCloud 同口径积分(1000 分 = 世界纪录),用于跨泳池、跨项目统一比较。以下对比基于 33 所大学 2026 级 355 名新生的公开成绩聚合统计。",
+    tiers:{safety:"稳进 Safety",match:"匹配 Match",reach:"冲刺 Reach",far:"差距较大 Long Shot"},
+    tierDesc:{safety:"你快于该校 2026 级一半以上新生",match:"你的水平落在该校新生区间内",reach:"略慢于该校最慢新生,在争取范围内",far:"与该校新生成绩差距较明显"},
+    pos:(a,b)=>`快于该校 <b>${a}/${b}</b> 名 2026 级新生`,
+    roster:(n)=>`新生样本 ${n} 人`,
+    lowN:"样本较少,仅供参考",
+    you:"你",
+    slowest:"最慢新生",fastest:"最快新生",
+    evYou:"你", evRange:"该校新生",
+    noSchool:"暂无匹配学校 —— 试试多填几个项目,或检查成绩格式。",
+    empty:"请至少填写一个项目的成绩。",
+    badTime:"有成绩格式不对(红框),请用 26.66 或 2:21.50 格式。",
+    foot:"数据说明:基于 SwimSwam 2026 届招募数据库与 SwimCloud 公开成绩的聚合统计(33 校 / 355 名新生),不含任何选手个人信息。换算与积分为估算值,结果仅供参考,不代表任何学校官方招募标准。© 2026 SwimMatch · Beta 免费公测中",
+    lang:"English"
+  },
+  en: {
+    tagline:"Enter your race times and see which U.S. colleges you could swim into, benchmarked against real class-of-2026 recruits.",
+    fTitle:"Your Times", gender:"Gender", course:"Pool / time type",
+    events:"Fill in the events you have (e.g. 26.66 or 2:21.50)",
+    go:"Get My Match Report →",
+    hint:"International swimmers: just enter LCM times — we convert to U.S. short-course yards automatically.",
+    rTitle:"Your Profile",
+    bestPts:"Best event points", bestEv:"Best event", scyEq:"SCY equivalent", nEv:"Events entered",
+    note:"Points follow SwimCloud's scale (1000 = world record) for cross-pool, cross-event comparison. Matches below are based on aggregate stats of 355 class-of-2026 recruits at 33 colleges.",
+    tiers:{safety:"Safety",match:"Match",reach:"Reach",far:"Long Shot"},
+    tierDesc:{safety:"Faster than half of this school's 2026 recruits",match:"Within this school's recruit range",reach:"Just behind their slowest recruit — within striking distance",far:"Well behind this school's recruit times"},
+    pos:(a,b)=>`Faster than <b>${a}/${b}</b> of their 2026 recruits`,
+    roster:(n)=>`${n} recruits sampled`,
+    lowN:"small sample — indicative only",
+    you:"You",
+    slowest:"slowest recruit",fastest:"fastest recruit",
+    evYou:"You", evRange:"their recruits",
+    noSchool:"No matches yet — try entering more events or check time formats.",
+    empty:"Please enter at least one time.",
+    badTime:"Some times are invalid (red) — use formats like 26.66 or 2:21.50.",
+    foot:"Data: aggregate statistics built from the SwimSwam class-of-2026 recruiting database and public SwimCloud times (33 colleges / 355 recruits). No individual swimmer data is shown. Conversions and points are estimates; results are indicative only and are not official recruiting standards of any school. © 2026 SwimMatch · Free Beta",
+    lang:"中文"
+  }
+};
+const EVENTS = {
+  SCY:["50 Free","100 Free","200 Free","500 Free","1000 Free","1650 Free","100 Back","200 Back","100 Breast","200 Breast","100 Fly","200 Fly","200 IM","400 IM"],
+  LCM:["50 Free","100 Free","200 Free","400 Free","800 Free","1500 Free","50 Back","100 Back","200 Back","50 Breast","100 Breast","200 Breast","50 Fly","100 Fly","200 Fly","200 IM","400 IM"]
+};
+EVENTS.SCM = EVENTS.LCM;
+const EV_ZH = {"Free":"自由泳","Back":"仰泳","Breast":"蛙泳","Fly":"蝶泳","IM":"混合泳"};
+const LCM_TO_SCY_EV = {"400 Free":"500 Free","800 Free":"1000 Free","1500 Free":"1650 Free"};
+const SCM_FACTOR = 0.966;           // SCM base ≈ LCM base × 0.966 (short-course speed gain)
+const REACH_PTS = 30;               // within ~1.2% of a school's slowest recruit
+let LANG = navigator.language && navigator.language.startsWith("zh") ? "zh" : "en";
+let STATS = null;
+let gender = "M", course = "LCM";
+
+function T(){ return I18N[LANG]; }
+function evLabel(ev){
+  if(LANG==="en") return ev;
+  const [d,s] = [ev.split(" ")[0], ev.split(" ").slice(1).join(" ")];
+  const unit = course==="SCY" ? "码" : "米";
+  return `${d}${unit}${EV_ZH[s]||s}`;
+}
+function applyLang(){
+  const t = T();
+  document.getElementById("tagline").textContent = t.tagline;
+  document.getElementById("f-title").textContent = t.fTitle;
+  document.getElementById("f-gender").textContent = t.gender;
+  document.getElementById("f-course").textContent = t.course;
+  document.getElementById("f-events").textContent = t.events;
+  document.getElementById("gobtn").textContent = t.go;
+  document.getElementById("f-hint").textContent = t.hint;
+  document.getElementById("r-title").textContent = t.rTitle;
+  document.getElementById("r-note").textContent = t.note;
+  document.getElementById("foot").textContent = t.foot;
+  document.getElementById("langbtn").textContent = t.lang;
+  renderEvents();
+}
+function toggleLang(){ LANG = LANG==="zh"?"en":"zh"; applyLang(); if(!document.getElementById("results").classList.contains("hide")) run(); }
+
+function seg(id, cb){
+  const el = document.getElementById(id);
+  el.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); cb(b.dataset.v);
+  });
+}
+seg("genderSeg", v=>{ gender=v; });
+seg("courseSeg", v=>{
+  const old = {};
+  EVENTS[course].forEach(ev=>{ const i=document.getElementById("in-"+ev.replace(/ /g,"_")); if(i&&i.value) old[ev]=i.value; });
+  course=v; renderEvents();
+  EVENTS[course].forEach(ev=>{ const i=document.getElementById("in-"+ev.replace(/ /g,"_")); if(i&&old[ev]) i.value=old[ev]; });
+});
+
+function renderEvents(){
+  const box = document.getElementById("events");
+  const old = {};
+  box.querySelectorAll("input").forEach(i=>{ if(i.value) old[i.dataset.ev]=i.value; });
+  box.innerHTML = "";
+  EVENTS[course].forEach(ev=>{
+    const d = document.createElement("div"); d.className="ev";
+    const id = "in-"+ev.replace(/ /g,"_");
+    d.innerHTML = `<label for="${id}">${evLabel(ev)}</label><input id="${id}" data-ev="${ev}" inputmode="decimal" placeholder="--" value="${old[ev]||""}">`;
+    box.appendChild(d);
+  });
+}
+
+function parseTime(s){
+  s = s.trim().replace(/[,,::']/g,":");
+  if(!s) return null;
+  const m = s.match(/^(?:(\d+):)?(\d{1,2}(?:\.\d+)?)$/);
+  if(!m) return NaN;
+  const v = (m[1]?parseInt(m[1])*60:0) + parseFloat(m[2]);
+  return v>0 ? v : NaN;
+}
+function fmtTime(t){
+  if(t>=60){ const m=Math.floor(t/60); return m+":"+ (t-m*60).toFixed(2).padStart(5,"0"); }
+  return t.toFixed(2);
+}
+
+function computePoints(ev, tsec){
+  const b = STATS.pointBases[gender+"|"+ev];
+  if(!b) return null;
+  let base;
+  if(course==="SCY") base = b.scy;
+  else if(course==="LCM") base = b.lcm;
+  else base = b.lcm * SCM_FACTOR;
+  if(!base) return null;
+  return 1000 * Math.pow(base/tsec, 3);
+}
+function scyEquiv(ev, pts){
+  const scyEv = LCM_TO_SCY_EV[ev] || ev;
+  const b = STATS.pointBases[gender+"|"+scyEv];
+  if(!b || !b.scy) return null;
+  return { ev: scyEv, t: b.scy * Math.pow(1000/pts, 1/3) };
+}
+
+function run(){
+  const t = T();
+  const entries = [];
+  let bad = false;
+  document.querySelectorAll("#events input").forEach(i=>{
+    i.classList.remove("bad");
+    if(!i.value.trim()) return;
+    const sec = parseTime(i.value);
+    if(isNaN(sec) || sec===null){ i.classList.add("bad"); bad=true; return; }
+    const pts = computePoints(i.dataset.ev, sec);
+    if(pts) entries.push({ev:i.dataset.ev, sec, pts});
+  });
+  if(bad){ alert(t.badTime); return; }
+  if(!entries.length){ alert(t.empty); return; }
+
+  entries.sort((a,b)=>b.pts-a.pts);
+  const best = entries[0];
+  const eq = scyEquiv(best.ev, best.pts);
+  const P = best.pts;
+
+  document.getElementById("summary").innerHTML = `
+    <div class="stat"><div class="v">${Math.round(P)}</div><div class="k">${t.bestPts}</div></div>
+    <div class="stat"><div class="v" style="font-size:17px">${evLabel(best.ev)} ${fmtTime(best.sec)}</div><div class="k">${t.bestEv}</div></div>
+    ${eq?`<div class="stat"><div class="v" style="font-size:17px">${eq.ev} ${fmtTime(eq.t)}</div><div class="k">${t.scyEq}</div></div>`:""}
+    <div class="stat"><div class="v">${entries.length}</div><div class="k">${t.nEv}</div></div>`;
+
+  // classify schools
+  const tiers = {safety:[],match:[],reach:[],far:[]};
+  STATS.schools.forEach(s=>{
+    const r = s.rosters[gender];
+    if(!r) return;
+    let tier;
+    if(P >= r.pMed) tier="safety";
+    else if(P >= r.pMin) tier="match";
+    else if(P >= r.pMin - REACH_PTS) tier="reach";
+    else tier="far";
+    tiers[tier].push({s, r});
+  });
+  Object.values(tiers).forEach(a=>a.sort((x,y)=>y.r.pMed - x.r.pMed));
+
+  const colors = {safety:"var(--safety)",match:"var(--match)",reach:"var(--reach)",far:"var(--far)"};
+  let html = "";
+  ["safety","match","reach","far"].forEach(tier=>{
+    const arr = tiers[tier];
+    if(!arr.length) return;
+    html += `<div class="tier-h"><span class="dot" style="background:${colors[tier]}"></span>${t.tiers[tier]}<span class="cnt">· ${arr.length} · ${t.tierDesc[tier]}</span></div>`;
+    arr.forEach(({s,r})=>{
+      const beaten = r.points.filter(p=>P>=p).length;
+      const lo=r.pMin, hi=r.pMax, span=Math.max(hi-lo,1);
+      const clamp = v=>Math.max(2,Math.min(98, (v-lo)/span*96+2));
+      const dots = r.points.map(p=>`<span class="pt" style="left:${clamp(p)}%"></span>`).join("");
+      const mePos = clamp(Math.max(lo-REACH_PTS, Math.min(hi+10, P)));
+      // per-event comparison for user's entered events
+      let cmps = "";
+      entries.slice(0,5).forEach(e=>{
+        const scyEv = LCM_TO_SCY_EV[e.ev] || e.ev;
+        const evd = r.events[scyEv];
+        const meq = scyEquiv(e.ev, e.pts);
+        if(!evd || !meq) return;
+        const faster = meq.t <= evd.max;
+        cmps += `<div class="evcmp">${scyEv} · ${t.evYou} <b>${fmtTime(meq.t)}</b> vs ${t.evRange} ${fmtTime(evd.min)}–${fmtTime(evd.max)} <span class="${faster?"ok":"no"}">${faster?"✓":"△"}</span></div>`;
+      });
+      html += `<div class="school" style="border-left-color:${colors[tier]}">
+        <div class="top"><span class="nm">${s.name}</span>
+          <span class="badge ${s.div.toLowerCase()}">${s.div}</span>
+          <span class="badge">${s.conf}</span>
+          <span class="small">${t.roster(r.n)}${r.n<4?" · "+t.lowN:""}</span></div>
+        <div class="pos">${t.pos(beaten, r.n)}</div>
+        <div class="strip">${dots}<span class="me" style="left:${mePos}%"></span></div>
+        <div class="striplbl"><span>${t.slowest} ${lo}</span><span style="color:var(--aqua);font-weight:700">▎${t.you} ${Math.round(P)}</span><span>${t.fastest} ${hi}</span></div>
+        ${cmps}</div>`;
+    });
+  });
+  document.getElementById("tiers").innerHTML = html || `<div class="card">${t.noSchool}</div>`;
+  document.getElementById("results").classList.remove("hide");
+  document.getElementById("results").scrollIntoView({behavior:"smooth"});
+}
+
+fetch("stats.json").then(r=>r.json()).then(d=>{ STATS=d; });
+applyLang();
+</script>
+</body>
+</html>
