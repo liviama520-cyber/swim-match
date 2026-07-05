@@ -70,7 +70,7 @@ footer{margin-top:28px;font-size:12px;color:var(--far);line-height:1.7}
   <div class="logo"><span>Swim</span>Match<span class="beta">FREE BETA</span></div>
   <button class="langbtn" id="langbtn" onclick="toggleLang()">English</button>
 </header>
-<p class="tagline" id="tagline">输入你的比赛成绩,看看以 2026 级新生的真实水平,你能游进哪所美国大学。</p>
+<p class="tagline" id="tagline">输入你的比赛成绩,对比美国大学 2026 级新生的真实水平,看看你处于哪些学校的成绩区间。仅成绩维度参考,不构成录取预测。</p>
 
 <div class="card">
   <h2 id="f-title">你的成绩</h2>
@@ -107,49 +107,59 @@ footer{margin-top:28px;font-size:12px;color:var(--far);line-height:1.7}
 <script>
 const I18N = {
   zh: {
-    tagline:"输入你的比赛成绩,看看以 2026 级新生的真实水平,你能游进哪所美国大学。",
+    tagline:"输入你的比赛成绩,对比美国大学 2026 级新生的真实水平,看看你处于哪些学校的成绩区间。仅成绩维度参考,不构成录取预测。",
     fTitle:"你的成绩", gender:"性别", course:"泳池 / 成绩类型",
     events:"填写你有的项目即可(格式如 26.66 或 2:21.50)",
     go:"生成匹配报告 →",
     hint:"中国选手直接填长池米成绩即可,系统自动与美国短码成绩换算对比。",
     rTitle:"你的水平概览",
     bestPts:"最强项积分", bestEv:"最强项目", scyEq:"换算短码成绩", nEv:"已填项目",
-    note:"积分为 SwimCloud 同口径积分(1000 分 = 世界纪录),用于跨泳池、跨项目统一比较。以下对比基于 33 所大学 2026 级 355 名新生的公开成绩聚合统计。",
-    tiers:{safety:"稳进 Safety",match:"匹配 Match",reach:"冲刺 Reach",far:"差距较大 Long Shot"},
-    tierDesc:{safety:"你快于该校 2026 级一半以上新生",match:"你的水平落在该校新生区间内",reach:"略慢于该校最慢新生,在争取范围内",far:"与该校新生成绩差距较明显"},
-    pos:(a,b)=>`快于该校 <b>${a}/${b}</b> 名 2026 级新生`,
+    note:"积分为 SwimCloud 同口径积分(1000 分 = 世界纪录),用于跨泳池、跨项目统一比较。以下对比基于 33 所大学 2026 级新生的公开成绩聚合统计。",
+    disclaimer:"⚠️ 重要:本报告只对比「成绩」这一个维度,不是录取预测。实际招募还取决于很多成绩之外的因素——队伍当年对各泳姿/项目的需求、名额、学业成绩(GPA/标化)、联系教练的时机等。「成绩相当」只说明你的成绩进入了该校新生的成绩区间,不代表会被招募。",
+    fewEv:(n)=>`你只填了 ${n} 个项目。多填几项(尤其是你的主项)对比才有意义——大学教练看的是你的强项组合,不是单项。`,
+    tiers:{safety:"成绩领先",match:"成绩相当",reach:"接近区间",far:"尚有差距"},
+    tierDesc:{safety:"仅成绩维度:你的最强项积分高于该校 2026 级新生的中位水平",match:"仅成绩维度:进入该校新生成绩区间(前 75%)",reach:"仅成绩维度:略低于该校新生区间,差距在约 1% 以内",far:"仅成绩维度:与该校新生成绩差距较明显"},
+    lowNTier:"样本不足,不作判断",
+    lowNDesc:"该校有成绩的新生样本少于 4 人,数据不足以支持任何对比结论",
+    pos:(a,b)=>`最强项积分高于该校 <b>${a}/${b}</b> 名 2026 级新生(仅成绩对比)`,
     roster:(n)=>`新生样本 ${n} 人`,
     lowN:"样本较少,仅供参考",
     you:"你",
     slowest:"最慢新生",fastest:"最快新生",
     evYou:"你", evRange:"该校新生",
+    evNote:"※ 对比区间来自该校新生各自最强 5 项的成绩,他们的主项和泳姿分布可能与你不同。",
     noSchool:"暂无匹配学校 —— 试试多填几个项目,或检查成绩格式。",
     empty:"请至少填写一个项目的成绩。",
     badTime:"有成绩格式不对(红框),请用 26.66 或 2:21.50 格式。",
-    foot:"数据说明:基于 SwimSwam 2026 届招募数据库与 SwimCloud 公开成绩的聚合统计(33 校 / 355 名新生),不含任何选手个人信息。换算与积分为估算值,结果仅供参考,不代表任何学校官方招募标准。© 2026 SwimMatch · Beta 免费公测中",
+    foot:"数据说明:基于 SwimSwam 2026 届招募数据库与 SwimCloud 公开成绩的聚合统计,不含任何选手个人信息。换算与积分为估算值。本站仅提供成绩维度的参考对比,不构成录取预测或建议,不代表任何学校官方招募标准。© 2026 SwimMatch · Beta 免费公测中",
     lang:"English"
   },
   en: {
-    tagline:"Enter your race times and see which U.S. colleges you could swim into, benchmarked against real class-of-2026 recruits.",
+    tagline:"Enter your race times and see where you stand against real class-of-2026 college recruits. A times-only reference — not a recruiting prediction.",
     fTitle:"Your Times", gender:"Gender", course:"Pool / time type",
     events:"Fill in the events you have (e.g. 26.66 or 2:21.50)",
     go:"Get My Match Report →",
     hint:"International swimmers: just enter LCM times — we convert to U.S. short-course yards automatically.",
     rTitle:"Your Profile",
     bestPts:"Best event points", bestEv:"Best event", scyEq:"SCY equivalent", nEv:"Events entered",
-    note:"Points follow SwimCloud's scale (1000 = world record) for cross-pool, cross-event comparison. Matches below are based on aggregate stats of 355 class-of-2026 recruits at 33 colleges.",
-    tiers:{safety:"Safety",match:"Match",reach:"Reach",far:"Long Shot"},
-    tierDesc:{safety:"Faster than half of this school's 2026 recruits",match:"Within this school's recruit range",reach:"Just behind their slowest recruit — within striking distance",far:"Well behind this school's recruit times"},
-    pos:(a,b)=>`Faster than <b>${a}/${b}</b> of their 2026 recruits`,
+    note:"Points follow SwimCloud's scale (1000 = world record) for cross-pool, cross-event comparison. Comparisons below are based on aggregate stats of class-of-2026 recruits at 33 colleges.",
+    disclaimer:"⚠️ Important: this report compares TIMES only — it is not a recruiting prediction. Actual recruiting depends on many factors beyond times: the team's needs by stroke and event that year, roster spots, academics (GPA / test scores), and when you contact coaches. \"Times in range\" means your times fall within this school's recruit range — nothing more.",
+    fewEv:(n)=>`You entered only ${n} event${n>1?"s":""}. Add more (especially your main events) — coaches evaluate your event lineup, not a single swim.`,
+    tiers:{safety:"Times Ahead",match:"Times In Range",reach:"Times Close",far:"Times Behind"},
+    tierDesc:{safety:"Times only: your best-event points beat this school's median 2026 recruit",match:"Times only: inside this school's recruit range (top 75%)",reach:"Times only: just below their range — within about 1%",far:"Times only: well behind this school's recruit times"},
+    lowNTier:"Not Enough Data",
+    lowNDesc:"Fewer than 4 recruits with times — too small a sample for any conclusion",
+    pos:(a,b)=>`Best-event points ahead of <b>${a}/${b}</b> of their 2026 recruits (times only)`,
     roster:(n)=>`${n} recruits sampled`,
     lowN:"small sample — indicative only",
     you:"You",
     slowest:"slowest recruit",fastest:"fastest recruit",
     evYou:"You", evRange:"their recruits",
+    evNote:"※ Ranges come from each recruit's own top-5 events — their specialties may differ from yours.",
     noSchool:"No matches yet — try entering more events or check time formats.",
     empty:"Please enter at least one time.",
     badTime:"Some times are invalid (red) — use formats like 26.66 or 2:21.50.",
-    foot:"Data: aggregate statistics built from the SwimSwam class-of-2026 recruiting database and public SwimCloud times (33 colleges / 355 recruits). No individual swimmer data is shown. Conversions and points are estimates; results are indicative only and are not official recruiting standards of any school. © 2026 SwimMatch · Free Beta",
+    foot:"Data: aggregate statistics built from the SwimSwam class-of-2026 recruiting database and public SwimCloud times. No individual swimmer data is shown. Conversions and points are estimates. This site offers a times-only reference comparison — it is not a recruiting prediction or advice, and does not represent any school's official standards. © 2026 SwimMatch · Free Beta",
     lang:"中文"
   }
 };
@@ -161,7 +171,8 @@ EVENTS.SCM = EVENTS.LCM;
 const EV_ZH = {"Free":"自由泳","Back":"仰泳","Breast":"蛙泳","Fly":"蝶泳","IM":"混合泳"};
 const LCM_TO_SCY_EV = {"400 Free":"500 Free","800 Free":"1000 Free","1500 Free":"1650 Free"};
 const SCM_FACTOR = 0.966;           // SCM base ≈ LCM base × 0.966 (short-course speed gain)
-const REACH_PTS = 30;               // within ~1.2% of a school's slowest recruit
+const REACH_PTS = 30;               // "close": within ~1.2% below the in-range cutoff
+const MIN_N = 4;                    // rosters smaller than this get no tier judgment
 let LANG = navigator.language && navigator.language.startsWith("zh") ? "zh" : "en";
 let STATS = null;
 let gender = "M", course = "LCM";
@@ -274,26 +285,37 @@ function run(){
     ${eq?`<div class="stat"><div class="v" style="font-size:17px">${eq.ev} ${fmtTime(eq.t)}</div><div class="k">${t.scyEq}</div></div>`:""}
     <div class="stat"><div class="v">${entries.length}</div><div class="k">${t.nEv}</div></div>`;
 
-  // classify schools
-  const tiers = {safety:[],match:[],reach:[],far:[]};
+  // classify schools — quantile-based, robust to a single stray roster point
+  const quantile = (sorted, q) => {
+    const pos = (sorted.length - 1) * q, lo = Math.floor(pos);
+    return lo + 1 < sorted.length ? sorted[lo] + (sorted[lo+1] - sorted[lo]) * (pos - lo) : sorted[lo];
+  };
+  const tiers = {safety:[],match:[],reach:[],far:[],lown:[]};
   STATS.schools.forEach(s=>{
     const r = s.rosters[gender];
     if(!r) return;
     let tier;
-    if(P >= r.pMed) tier="safety";
-    else if(P >= r.pMin) tier="match";
-    else if(P >= r.pMin - REACH_PTS) tier="reach";
-    else tier="far";
+    if(r.n < MIN_N) tier="lown";
+    else {
+      const q25 = quantile(r.points, 0.25);
+      if(P >= r.pMed) tier="safety";
+      else if(P >= q25) tier="match";
+      else if(P >= q25 - REACH_PTS) tier="reach";
+      else tier="far";
+    }
     tiers[tier].push({s, r});
   });
   Object.values(tiers).forEach(a=>a.sort((x,y)=>y.r.pMed - x.r.pMed));
 
-  const colors = {safety:"var(--safety)",match:"var(--match)",reach:"var(--reach)",far:"var(--far)"};
-  let html = "";
-  ["safety","match","reach","far"].forEach(tier=>{
+  const colors = {safety:"var(--safety)",match:"var(--match)",reach:"var(--reach)",far:"var(--far)",lown:"var(--far)"};
+  let html = `<div class="note" style="background:#fdeeee;border-color:#f0c8c8">${t.disclaimer}</div>`;
+  if(entries.length < 3) html += `<div class="note">${t.fewEv(entries.length)}</div>`;
+  ["safety","match","reach","far","lown"].forEach(tier=>{
     const arr = tiers[tier];
     if(!arr.length) return;
-    html += `<div class="tier-h"><span class="dot" style="background:${colors[tier]}"></span>${t.tiers[tier]}<span class="cnt">· ${arr.length} · ${t.tierDesc[tier]}</span></div>`;
+    const label = tier==="lown" ? t.lowNTier : t.tiers[tier];
+    const desc = tier==="lown" ? t.lowNDesc : t.tierDesc[tier];
+    html += `<div class="tier-h"><span class="dot" style="background:${colors[tier]}"></span>${label}<span class="cnt">· ${arr.length} · ${desc}</span></div>`;
     arr.forEach(({s,r})=>{
       const beaten = r.points.filter(p=>P>=p).length;
       const lo=r.pMin, hi=r.pMax, span=Math.max(hi-lo,1);
@@ -310,6 +332,7 @@ function run(){
         const faster = meq.t <= evd.max;
         cmps += `<div class="evcmp">${scyEv} · ${t.evYou} <b>${fmtTime(meq.t)}</b> vs ${t.evRange} ${fmtTime(evd.min)}–${fmtTime(evd.max)} <span class="${faster?"ok":"no"}">${faster?"✓":"△"}</span></div>`;
       });
+      if(cmps) cmps += `<div class="small" style="margin-top:4px">${t.evNote}</div>`;
       html += `<div class="school" style="border-left-color:${colors[tier]}">
         <div class="top"><span class="nm">${s.name}</span>
           <span class="badge ${s.div.toLowerCase()}">${s.div}</span>

@@ -83,6 +83,20 @@ def main():
         schools.setdefault(key, []).append(best)
         meta[r["college"]] = {"div": r["div"], "conf": r["conf"]}
 
+    # drop outliers far below a roster's median — these are almost always
+    # wrong SwimCloud name matches, and one bad point wrecks the school's range
+    OUTLIER_GAP = 150
+    dropped = []
+    for key, pts in schools.items():
+        if len(pts) >= 3:
+            med = statistics.median(pts)
+            kept = [p for p in pts if p >= med - OUTLIER_GAP]
+            if len(kept) < len(pts):
+                dropped.append((key, [p for p in pts if p < med - OUTLIER_GAP]))
+            schools[key] = kept
+    for key, out in dropped:
+        print(f"  outlier dropped {key}: {out}")
+
     # ---- 3. per school+gender+event: SCY-equivalent time ranges ----
     # convert every swim to SCY-equivalent via points identity:
     #   t_scy = B_scy * (1000/p)^(1/3)
