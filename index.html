@@ -58,6 +58,18 @@ h2{font-size:16px;margin-bottom:14px}
 .evcmp .ok{color:var(--safety);font-weight:700}
 .evcmp .no{color:var(--reach);font-weight:700}
 .small{font-size:11px;color:var(--far)}
+.needline{font-size:12.5px;margin-top:8px;padding:7px 10px;border-radius:8px;background:var(--bg);color:var(--sub)}
+.needline b{color:var(--ink)}
+.needline.hit{background:#eaf7f1;color:#14683f}
+.needline.hit b{color:#0e5232}
+.needtag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;margin-left:6px;background:#1a9e6c;color:#fff}
+.ovwrap{overflow-x:auto}
+.ovtable{width:100%;border-collapse:collapse;font-size:13px}
+.ovtable th{text-align:left;font-size:11.5px;color:var(--sub);padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ovtable td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.ovtable .sm{font-size:11px;color:var(--far);white-space:nowrap}
+.grp{display:inline-block;font-size:11.5px;border-radius:6px;padding:1px 7px;margin:1px 3px 1px 0;background:#e7f0fa;color:var(--blue);font-weight:600;white-space:nowrap}
+.grp.hot{background:#fdeeda;color:#b56a00}
 .note{font-size:12px;color:var(--sub);background:#fdf6e8;border:1px solid #f2e3bd;border-radius:10px;padding:10px 14px;margin:14px 0}
 footer{margin-top:28px;font-size:12px;color:var(--far);line-height:1.7}
 .hide{display:none}
@@ -85,6 +97,11 @@ footer{margin-top:28px;font-size:12px;color:var(--far);line-height:1.7}
         <button data-v="LCM" class="on">长池 50m</button><button data-v="SCM">短池 25m</button><button data-v="SCY">短码 25y</button>
       </div>
     </div>
+    <div class="field"><label id="f-grad">高中毕业年份(届)</label>
+      <div class="seg" id="gradSeg">
+        <button data-v="2027">2027</button><button data-v="2028" class="on">2028</button><button data-v="2029">2029</button><button data-v="2030">2030</button>
+      </div>
+    </div>
   </div>
   <div class="field"><label id="f-events">填写你有的项目即可(格式如 26.66 或 2:21.50)</label></div>
   <div class="events" id="events"></div>
@@ -101,6 +118,13 @@ footer{margin-top:28px;font-size:12px;color:var(--far);line-height:1.7}
   <div id="tiers"></div>
 </div>
 
+<div class="card" id="needsCard">
+  <h2 id="n-title">2027–2030 各校招募重点预测</h2>
+  <p class="hint" id="n-desc" style="margin:0 0 12px"></p>
+  <div class="ovwrap" id="overview"></div>
+  <div class="small" id="n-note" style="margin-top:10px"></div>
+</div>
+
 <footer id="foot"></footer>
 </div>
 
@@ -115,7 +139,7 @@ const I18N = {
     rTitle:"你的水平概览",
     bestPts:"最强项积分", bestEv:"最强项目", scyEq:"换算短码成绩", nEv:"已填项目",
     note:"积分为 SwimCloud 同口径积分(1000 分 = 世界纪录),用于跨泳池、跨项目统一比较。以下对比基于 33 所大学 2026 级新生的公开成绩聚合统计。",
-    disclaimer:"⚠️ 重要:本报告只对比「成绩」这一个维度,不是录取预测。实际招募还取决于很多成绩之外的因素——队伍当年对各泳姿/项目的需求、名额、学业成绩(GPA/标化)、联系教练的时机等。「成绩相当」只说明你的成绩进入了该校新生的成绩区间,不代表会被招募。",
+    disclaimer:"⚠️ 重要:本报告不是录取预测。「成绩」对比只说明你进入了该校新生的成绩区间;「招募重点预测」只是根据公开锦标赛阵容年级构成做的推算,不代表教练的实际招募计划。实际招募还取决于名额、学业成绩(GPA/标化)、联系教练的时机等诸多因素。",
     fewEv:(n)=>`你只填了 ${n} 个项目。多填几项(尤其是你的主项)对比才有意义——大学教练看的是你的强项组合,不是单项。`,
     tiers:{safety:"成绩领先",match:"成绩相当",reach:"接近区间",far:"尚有差距"},
     tierDesc:{safety:"仅成绩维度:你的最强项积分高于该校 2026 级新生的中位水平",match:"仅成绩维度:进入该校新生成绩区间(前 75%)",reach:"仅成绩维度:略低于该校新生区间,差距在约 1% 以内",far:"仅成绩维度:与该校新生成绩差距较明显"},
@@ -131,7 +155,21 @@ const I18N = {
     noSchool:"暂无匹配学校 —— 试试多填几个项目,或检查成绩格式。",
     empty:"请至少填写一个项目的成绩。",
     badTime:"有成绩格式不对(红框),请用 26.66 或 2:21.50 格式。",
-    foot:"数据说明:基于 SwimSwam 2026 届招募数据库与 SwimCloud 公开成绩的聚合统计,不含任何选手个人信息。换算与积分为估算值。本站仅提供成绩维度的参考对比,不构成录取预测或建议,不代表任何学校官方招募标准。© 2026 SwimMatch · Beta 免费公测中",
+    grad:"高中毕业年份(届)",
+    nTitle:"2027–2030 各校招募重点预测",
+    nDesc:"根据各校现役主力(2026 赛季锦标赛阵容)的年级构成推算:某届高中生入学时,恰好要填补当年毕业主力留下的泳姿空缺。下表为所选性别、所选毕业届的预测。",
+    nNote:"数据:2026 NCAA D1 / D3 锦标赛与藤校联赛成绩(选手年级×项目),2030 届基于该校 2026 级新生构成推算。「流失」= 该届毕业的主力人数(按项目分摊)。样本仅含锦标赛级选手,不含全部队员;仅供参考,不代表教练实际招募计划。",
+    nFocus:(y)=>`预测 ${y} 届招募重点`,
+    nLeave:(x)=>`流失 ${x} 人`,
+    nMatch:"与你的主项匹配",
+    nWeak:"该届你的主项预测需求较低",
+    nFew:"该届毕业流失少,新人名额可能有限",
+    nNoData:"招募需求数据不足",
+    nSample:(n)=>`主力样本 ${n} 人`,
+    nEst:"推算",
+    nSchool:"学校", nSampleH:"样本", nFocusH:"预测招募重点(按流失人数排序)",
+    groups:{"FR-SP":"短距自由(50/100)","FR-MID":"中距自由(200/500)","FR-DIST":"长距自由(1000/1650)","BK":"仰泳","BR":"蛙泳","FL":"蝶泳","IM":"混合泳"},
+    foot:"数据说明:成绩对比基于 SwimSwam 2026 届招募数据库与 SwimCloud 公开成绩的聚合统计;招募重点预测基于 2026 NCAA D1/D3 锦标赛及藤校联赛公开成绩的年级×项目聚合。站点不含任何选手个人信息,换算与积分为估算值。本站仅提供参考对比,不构成录取预测或建议,不代表任何学校官方招募标准。© 2026 SwimMatch · Beta 免费公测中",
     lang:"English"
   },
   en: {
@@ -143,7 +181,7 @@ const I18N = {
     rTitle:"Your Profile",
     bestPts:"Best event points", bestEv:"Best event", scyEq:"SCY equivalent", nEv:"Events entered",
     note:"Points follow SwimCloud's scale (1000 = world record) for cross-pool, cross-event comparison. Comparisons below are based on aggregate stats of class-of-2026 recruits at 33 colleges.",
-    disclaimer:"⚠️ Important: this report compares TIMES only — it is not a recruiting prediction. Actual recruiting depends on many factors beyond times: the team's needs by stroke and event that year, roster spots, academics (GPA / test scores), and when you contact coaches. \"Times in range\" means your times fall within this school's recruit range — nothing more.",
+    disclaimer:"⚠️ Important: this report is not a recruiting prediction. The times comparison only shows you are within a school's recruit time range; the \"recruiting focus\" prediction is only an estimate from public championship-lineup class data, not any coach's actual plan. Real recruiting also depends on roster spots, academics (GPA / test scores), and when you contact coaches.",
     fewEv:(n)=>`You entered only ${n} event${n>1?"s":""}. Add more (especially your main events) — coaches evaluate your event lineup, not a single swim.`,
     tiers:{safety:"Times Ahead",match:"Times In Range",reach:"Times Close",far:"Times Behind"},
     tierDesc:{safety:"Times only: your best-event points beat this school's median 2026 recruit",match:"Times only: inside this school's recruit range (top 75%)",reach:"Times only: just below their range — within about 1%",far:"Times only: well behind this school's recruit times"},
@@ -159,7 +197,21 @@ const I18N = {
     noSchool:"No matches yet — try entering more events or check time formats.",
     empty:"Please enter at least one time.",
     badTime:"Some times are invalid (red) — use formats like 26.66 or 2:21.50.",
-    foot:"Data: aggregate statistics built from the SwimSwam class-of-2026 recruiting database and public SwimCloud times. No individual swimmer data is shown. Conversions and points are estimates. This site offers a times-only reference comparison — it is not a recruiting prediction or advice, and does not represent any school's official standards. © 2026 SwimMatch · Free Beta",
+    grad:"HS graduation year",
+    nTitle:"2027–2030 Predicted Recruiting Focus by School",
+    nDesc:"Based on the class-year makeup of each team's 2026 championship lineup: an incoming HS class arrives just as that year's graduating seniors leave, so teams recruit to fill those stroke gaps. Table shows the selected gender and HS class.",
+    nNote:"Data: 2026 NCAA D1 / D3 Championships and Ivy League Championships (swimmer class year × events); class of 2030 estimated from each school's 2026 incoming recruits. \"Leaving\" = championship-level swimmers graduating that spring (weighted by event). Sample covers championship swimmers only — an indicative signal, not a coach's actual recruiting plan.",
+    nFocus:(y)=>`Predicted class-of-${y} recruiting focus`,
+    nLeave:(x)=>`${x} leaving`,
+    nMatch:"matches your main stroke",
+    nWeak:"low predicted need for your main stroke this class",
+    nFew:"few departures that year — roster spots may be limited",
+    nNoData:"not enough roster data",
+    nSample:(n)=>`${n} championship swimmers`,
+    nEst:"estimated",
+    nSchool:"School", nSampleH:"Sample", nFocusH:"Predicted focus (by departures)",
+    groups:{"FR-SP":"Sprint Free (50/100)","FR-MID":"Mid Free (200/500)","FR-DIST":"Distance Free (1000/1650)","BK":"Backstroke","BR":"Breaststroke","FL":"Butterfly","IM":"IM"},
+    foot:"Data: times comparison from aggregate statistics of the SwimSwam class-of-2026 recruiting database and public SwimCloud times; recruiting-focus predictions from class-year × event aggregates of public 2026 NCAA D1/D3 and Ivy League championship results. No individual swimmer data is shown. Conversions and points are estimates. This site is a reference tool — not a recruiting prediction or advice, and does not represent any school's official standards. © 2026 SwimMatch · Free Beta",
     lang:"中文"
   }
 };
@@ -174,8 +226,19 @@ const SCM_FACTOR = 0.966;           // SCM base ≈ LCM base × 0.966 (short-cou
 const REACH_PTS = 30;               // "close": within ~1.2% below the in-range cutoff
 const MIN_N = 4;                    // rosters smaller than this get no tier judgment
 let LANG = navigator.language && navigator.language.startsWith("zh") ? "zh" : "en";
-let STATS = null;
-let gender = "M", course = "LCM";
+let STATS = null, NEEDS = null;
+let gender = "M", course = "LCM", gradYear = "2028";
+
+function eventGroup(ev){
+  const m = ev.match(/^(\d+)\s+(Free|Back|Breast|Fly|IM)$/);
+  if(!m) return null;
+  let d = parseInt(m[1]);
+  if(m[2]==="Free"){
+    d = {400:500, 800:1000, 1500:1650}[d] || d;
+    return d<=100 ? "FR-SP" : d<=500 ? "FR-MID" : "FR-DIST";
+  }
+  return {Back:"BK",Breast:"BR",Fly:"FL",IM:"IM"}[m[2]];
+}
 
 function T(){ return I18N[LANG]; }
 function evLabel(ev){
@@ -197,7 +260,12 @@ function applyLang(){
   document.getElementById("r-note").textContent = t.note;
   document.getElementById("foot").textContent = t.foot;
   document.getElementById("langbtn").textContent = t.lang;
+  document.getElementById("f-grad").textContent = t.grad;
+  document.getElementById("n-title").textContent = t.nTitle;
+  document.getElementById("n-desc").textContent = t.nDesc;
+  document.getElementById("n-note").textContent = t.nNote;
   renderEvents();
+  renderOverview();
 }
 function toggleLang(){ LANG = LANG==="zh"?"en":"zh"; applyLang(); if(!document.getElementById("results").classList.contains("hide")) run(); }
 
@@ -208,7 +276,8 @@ function seg(id, cb){
     b.classList.add("on"); cb(b.dataset.v);
   });
 }
-seg("genderSeg", v=>{ gender=v; });
+seg("genderSeg", v=>{ gender=v; renderOverview(); });
+seg("gradSeg", v=>{ gradYear=v; renderOverview(); if(!document.getElementById("results").classList.contains("hide")) run(); });
 seg("courseSeg", v=>{
   const old = {};
   EVENTS[course].forEach(ev=>{ const i=document.getElementById("in-"+ev.replace(/ /g,"_")); if(i&&i.value) old[ev]=i.value; });
@@ -259,6 +328,63 @@ function scyEquiv(ev, pts){
   return { ev: scyEv, t: b.scy * Math.pow(1000/pts, 1/3) };
 }
 
+// ---- recruiting-needs helpers ----
+const MIN_NEED = 0.3;   // ignore fractional departures below this
+const HOT_NEED = 1.0;   // "focus" threshold: ≥1 swimmer-equivalent leaving
+function needRows(schoolName){
+  const nd = NEEDS && NEEDS.schools[schoolName] && NEEDS.schools[schoolName][gender];
+  if(!nd) return null;
+  const by = nd.byYear[gradYear];
+  if(by===undefined && nd.n===0) return null;
+  const rows = Object.entries(by||{})
+    .map(([grp,L])=>({grp, L, T:Math.max(nd.total[grp]||0, L)}))
+    .filter(r=>r.L>=MIN_NEED)
+    .sort((a,b)=>b.L-a.L);
+  return {n:nd.n, rows, est:gradYear==="2030"};
+}
+function grpTag(r, hot){
+  const t = T();
+  return `<span class="grp${hot?" hot":""}">${t.groups[r.grp]||r.grp} · ${t.nLeave(r.L.toFixed(1))}</span>`;
+}
+function userMainGroups(entries){
+  const gs = [];
+  entries.forEach(e=>{ const g=eventGroup(e.ev); if(g && !gs.includes(g)) gs.push(g); });
+  return gs.slice(0,2);   // groups of the user's two strongest events
+}
+function needLineHTML(schoolName, myGroups){
+  const t = T();
+  const nd = needRows(schoolName);
+  if(!nd || (nd.n===0 && !nd.rows.length))
+    return `<div class="needline">${t.nFocus(gradYear)}: ${t.nNoData}</div>`;
+  const est = nd.est ? ` <span class="small">(${t.nEst})</span>` : "";
+  if(!nd.rows.length)
+    return `<div class="needline">${t.nFocus(gradYear)}${est}: ${t.nFew} · <span class="small">${t.nSample(nd.n)}</span></div>`;
+  const top = nd.rows.slice(0,3);
+  const hit = top.some(r=>r.L>=HOT_NEED && myGroups.includes(r.grp));
+  const tags = top.map(r=>grpTag(r, r.L>=HOT_NEED)).join(" ");
+  const badge = hit ? `<span class="needtag">✓ ${t.nMatch}</span>`
+    : (nd.rows.every(r=>!myGroups.includes(r.grp)) ? ` <span class="small">· ${t.nWeak}</span>` : "");
+  return `<div class="needline${hit?" hit":""}"><b>${t.nFocus(gradYear)}</b>${est}: ${tags}${badge} <span class="small">· ${t.nSample(nd.n)}</span></div>`;
+}
+function renderOverview(){
+  const box = document.getElementById("overview");
+  if(!box) return;
+  const t = T();
+  if(!NEEDS || !STATS){ box.innerHTML=""; return; }
+  let rows = "";
+  STATS.schools.forEach(s=>{
+    if(!s.rosters[gender]) return;
+    const nd = needRows(s.name);
+    let cell;
+    if(!nd || (nd.n===0 && !nd.rows.length)) cell = `<span class="sm">${t.nNoData}</span>`;
+    else if(!nd.rows.length) cell = `<span class="sm">${t.nFew}</span>`;
+    else cell = nd.rows.slice(0,3).map(r=>grpTag(r, r.L>=HOT_NEED)).join(" ") + (nd.est?` <span class="sm">(${t.nEst})</span>`:"");
+    const n = nd ? nd.n : 0;
+    rows += `<tr><td><b>${s.name}</b> <span class="sm">${s.div}</span></td><td>${cell}</td><td class="sm">${n||"–"}</td></tr>`;
+  });
+  box.innerHTML = `<table class="ovtable"><thead><tr><th>${t.nSchool}</th><th>${t.nFocusH} · ${gradYear}</th><th>${t.nSampleH}</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
 function run(){
   const t = T();
   const entries = [];
@@ -275,6 +401,7 @@ function run(){
   if(!entries.length){ alert(t.empty); return; }
 
   entries.sort((a,b)=>b.pts-a.pts);
+  const myGroups = userMainGroups(entries);
   const best = entries[0];
   const eq = scyEquiv(best.ev, best.pts);
   const P = best.pts;
@@ -341,6 +468,7 @@ function run(){
         <div class="pos">${t.pos(beaten, r.n)}</div>
         <div class="strip">${dots}<span class="me" style="left:${mePos}%"></span></div>
         <div class="striplbl"><span>${t.slowest} ${lo}</span><span style="color:var(--aqua);font-weight:700">▎${t.you} ${Math.round(P)}</span><span>${t.fastest} ${hi}</span></div>
+        ${needLineHTML(s.name, myGroups)}
         ${cmps}</div>`;
     });
   });
@@ -349,7 +477,8 @@ function run(){
   document.getElementById("results").scrollIntoView({behavior:"smooth"});
 }
 
-fetch("stats.json").then(r=>r.json()).then(d=>{ STATS=d; });
+fetch("stats.json").then(r=>r.json()).then(d=>{ STATS=d; renderOverview(); });
+fetch("needs.json").then(r=>r.json()).then(d=>{ NEEDS=d; renderOverview(); }).catch(()=>{});
 applyLang();
 </script>
 </body>
